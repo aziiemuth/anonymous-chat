@@ -28,6 +28,10 @@ export default function MessageForm() {
     setError(null);
 
     try {
+      if (!supabase) {
+        throw new Error('Supabase client belum siap. Cek environment variables kamu di Vercel settings ya!');
+      }
+
       const { error: supabaseError } = await supabase.from('messages').insert([
         {
           message: message,

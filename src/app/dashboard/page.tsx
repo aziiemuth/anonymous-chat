@@ -89,6 +89,16 @@ export default function DashboardPage() {
     });
 
     if (result.isConfirmed) {
+      if (!supabase) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal Hapus',
+          text: 'Supabase client tidak ditemukan. Cek environment variables ya.',
+          background: 'var(--card-bg)',
+          color: 'var(--text-primary)',
+        });
+        return;
+      }
       const { error } = await supabase.from(table).delete().eq('id', id);
       if (error) {
         Swal.fire({
