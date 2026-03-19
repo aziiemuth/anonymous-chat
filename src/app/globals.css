@@ -1,26 +1,153 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — AnonBoard
+   ═══════════════════════════════════════════ */
+
+@theme {
+  --font-sans: var(--font-poppins), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --color-purple-main: #9333ea;
+  --color-pink-main: #db2777;
+  --color-blue-main: #2563eb;
+}
+
+/* ── Light Mode ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f1f5f9;
+  --foreground: #0f172a;
+
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(15, 23, 42, 0.06);
+  --card-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  --card-shadow-hover: 0 12px 32px rgba(15, 23, 42, 0.08);
+
+  --nav-bg: rgba(241, 245, 249, 0.85);
+  --nav-border: rgba(15, 23, 42, 0.06);
+
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --input-border: rgba(15, 23, 42, 0.1);
+  --input-focus: rgba(99, 102, 241, 0.4);
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+
+  --accent-purple: #6366f1;
+  --accent-pink: #0ea5e9;
+  --accent-blue: #3b82f6;
+  --accent-yellow: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-green: #10b981;
+
+  --badge-owner-bg: rgba(99, 102, 241, 0.1);
+  --badge-owner-text: #4338ca;
+
+  --btn-icon-idle: #64748b;
+  --btn-icon-hover-bg: rgba(15, 23, 42, 0.05);
+
+  --mesh-1: hsla(210, 40%, 93%, 1);
+  --mesh-2: hsla(230, 30%, 93%, 1);
+  --mesh-3: hsla(200, 35%, 91%, 1);
+
+  --skeleton-bg: rgba(15, 23, 42, 0.05);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Dark Mode ── */
+.dark {
+  --background: #0a0a0f;
+  --foreground: #f1f5f9;
+
+  --card-bg: rgba(17, 24, 39, 0.75);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.2);
+  --card-shadow-hover: 0 12px 48px rgba(0,0,0,0.4);
+
+  --nav-bg: rgba(10, 10, 15, 0.85);
+  --nav-border: rgba(255, 255, 255, 0.06);
+
+  --input-bg: rgba(30, 41, 59, 0.6);
+  --input-border: rgba(71, 85, 105, 0.5);
+  --input-focus: rgba(99, 102, 241, 0.5);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+
+  --accent-purple: #818cf8; /* Indigo light */
+  --accent-pink: #38bdf8; /* Cyan light */
+  --accent-blue: #60a5fa;
+  --accent-yellow: #fbbf24;
+  --accent-red: #f87171;
+  --accent-green: #34d399;
+
+  --badge-owner-bg: rgba(99, 102, 241, 0.15);
+  --badge-owner-text: #a5b4fc;
+
+  --btn-icon-idle: #94a3b8;
+  --btn-icon-hover-bg: rgba(255, 255, 255, 0.08);
+
+  --mesh-1: hsla(245, 30%, 6%, 1);
+  --mesh-2: hsla(200, 50%, 10%, 1);
+  --mesh-3: hsla(220, 40%, 8%, 1);
+
+  --skeleton-bg: rgba(255, 255, 255, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ── Base ── */
 body {
-  background: var(--background);
+  font-family: var(--font-sans);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Utility: Glass Card ── */
+@utility glass {
+  background-color: var(--card-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── Utility: Mesh Background ── */
+@utility bg-mesh {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(at 0% 0%, var(--mesh-1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, var(--mesh-2) 0, transparent 50%),
+    radial-gradient(at 100% 0%, var(--mesh-3) 0, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-faint);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ── Selection ── */
+::selection {
+  background-color: rgba(124, 58, 237, 0.25);
+  color: inherit;
+}
+
+/* ── Focus visible ── */
+*:focus-visible {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 2px;
+  border-radius: 8px;
 }

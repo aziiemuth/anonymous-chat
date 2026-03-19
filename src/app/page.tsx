@@ -1,65 +1,198 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useMessages } from '@/hooks/useMessages';
+import MessageCard from '@/components/MessageCard';
+import { motion } from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBolt, faCommentDots, faPaperPlane, faArrowTrendUp } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
+
+export default function HomePage() {
+  const { messages, replies, loading, addReply } = useMessages();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring' as const, stiffness: 100, damping: 15 } },
+  };
+
+  const typewriterVariants = {
+    hidden: { opacity: 1 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.2 },
+    },
+  };
+
+  const charVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 200 } },
+  };
+
+  const titlePart1 = "Kirim Pesan ";
+  const titlePart2 = "Anonim.";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="container mx-auto px-4 py-8 sm:py-20 relative overflow-hidden">
+      {/* Background Glows */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none" />
+
+      {/* Hero Section */}
+      <section className="text-center mb-20 sm:mb-32 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-8 shadow-lg shadow-indigo-500/10"
+          style={{
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            color: '#0ea5e9',
+            border: '1px solid rgba(99, 102, 241, 0.2)',
+          }}
+        >
+          <FontAwesomeIcon icon={faBolt} className="w-4 h-4" />
+          <span>Realtime Anonymous Board</span>
+        </motion.div>
+
+        {/* Typewriter H1 */}
+        <motion.h1
+          variants={typewriterVariants}
+          initial="hidden"
+          animate="show"
+          className="text-5xl sm:text-7xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          {titlePart1.split("").map((char, i) => (
+            <motion.span key={`p1-${i}`} variants={charVariants} className="inline-block whitespace-pre">
+              {char}
+            </motion.span>
+          ))}
+          <br className="sm:hidden" />
+          <span className="text-transparent bg-clip-text relative inline-block" style={{ backgroundImage: 'linear-gradient(135deg, #0ea5e9, #6366f1)' }}>
+            {titlePart2.split("").map((char, i) => (
+              <motion.span key={`p2-${i}`} variants={charVariants} className="inline-block">
+                {char}
+              </motion.span>
+            ))}
+            {/* Animated Underline */}
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 1.5, duration: 0.8, ease: "circOut" }}
+              className="absolute -bottom-2 left-0 w-full h-1.5 rounded-full"
+              style={{ background: 'linear-gradient(90deg, #0ea5e9, #6366f1)', transformOrigin: 'left' }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+          className="text-lg sm:text-xl mb-12 max-w-2xl mx-auto leading-relaxed font-medium"
+          style={{ color: 'var(--text-muted)' }}
+        >
+          Ungkapkan apa pun tanpa batas, tanpa identitas. Berbagi cerita, curhat rahasia, atau sekadar menyapa dunia. 🤫
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.5 }}
+        >
+          <Link href="/send">
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(99, 102, 241, 0.4)' }}
+              whileTap={{ scale: 0.95 }}
+              className="text-white px-8 py-4 rounded-2xl font-bold text-base shadow-2xl flex items-center space-x-3 mx-auto transition-all"
+              style={{ background: 'linear-gradient(135deg, #0ea5e9, #6366f1)', border: '1px solid rgba(255,255,255,0.1)' }}
+            >
+              <FontAwesomeIcon icon={faCommentDots} className="w-5 h-5" />
+              <span>Kirim Pesan Sekarang</span>
+            </motion.button>
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* Feed Header */}
+      <section className="relative z-10">
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-xl sm:text-2xl font-black flex items-center space-x-3" style={{ color: 'var(--text-primary)' }}>
+            <div className="w-1.5 h-8 rounded-full" style={{ background: 'linear-gradient(to bottom, #0ea5e9, #6366f1)' }} />
+            <FontAwesomeIcon icon={faArrowTrendUp} className="w-5 h-5" style={{ color: '#0ea5e9' }} />
+            <span>Live Feed</span>
+          </h2>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-xs font-bold px-3 py-1.5 rounded-full shadow-inner" 
+            style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)', color: '#6366f1', border: '1px solid rgba(99,102,241,0.2)' }}
           >
-            Documentation
-          </a>
+            {messages.length} Total Pesan
+          </motion.div>
         </div>
-      </main>
+
+        {/* Loading Skeletons */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="h-56 rounded-3xl animate-pulse"
+                style={{ backgroundColor: 'var(--skeleton-bg)' }}
+              />
+            ))}
+          </div>
+        ) : (
+          /* Message Grid */
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {messages.map((message) => (
+              <motion.div key={message.id} variants={itemVariants}>
+                <MessageCard
+                  message={message}
+                  replies={replies[message.id] || []}
+                  onReply={(content) => addReply(message.id, content)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Empty State */}
+        {!loading && messages.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-24 rounded-3xl backdrop-blur-md"
+            style={{
+              backgroundColor: 'var(--card-bg)',
+              border: '1px dashed var(--card-border)',
+            }}
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-inner" style={{ background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(99, 102, 241, 0.1))' }}>
+              <FontAwesomeIcon icon={faBolt} className="w-4 h-4 text-amber-500 animate-pulse" />
+            </div>
+            <p className="text-base font-bold" style={{ color: 'var(--text-secondary)' }}>
+              Belum ada pesan nih!
+            </p>
+            <FontAwesomeIcon icon={faCommentDots} className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-faint)' }} />
+            <p className="text-sm mt-2" style={{ color: 'var(--text-muted)' }}>
+              Jadilah yang pertama membuka obrolan anonim hari ini.
+            </p>
+          </motion.div>
+        )}
+      </section>
     </div>
   );
 }
