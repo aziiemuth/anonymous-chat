@@ -57,7 +57,7 @@ export function useMessages() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'messages' },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === 'INSERT') {
             setMessages((prev) => [payload.new as Message, ...prev]);
           } else if (payload.eventType === 'DELETE') {
@@ -76,7 +76,7 @@ export function useMessages() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'replies' },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === 'INSERT') {
             const newReply = payload.new as Reply;
             setReplies((prev) => ({
@@ -84,13 +84,19 @@ export function useMessages() {
               [newReply.message_id]: [...(prev[newReply.message_id] || []), newReply],
             }));
           } else if (payload.eventType === 'DELETE') {
-            const oldReply = payload.old as Reply;
-            setReplies((prev) => ({
-              ...prev,
-              [oldReply.message_id]: (prev[oldReply.message_id] || []).filter(
-                (r) => r.id !== oldReply.id
-              ),
-            }));
+            const oldReplyId = payload.old.id;
+            // Since Supabase DELETE payload often only has the ID, 
+            // we find which message this reply belongs to by searching current state
+            setReplies((prev) => {
+              const next = { ...prev };
+              for (const [msgId, msgReplies] of Object.entries(next)) {
+                if (msgReplies.some(r => r.id === oldReplyId)) {
+                  next[msgId] = msgReplies.filter(r => r.id !== oldReplyId);
+                  break;
+                }
+              }
+              return next;
+            });
           }
         }
       )

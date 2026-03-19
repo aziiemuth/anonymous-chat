@@ -11,6 +11,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faThumbtack, faStar, faMagnifyingGlass, faShieldHalved, faLock, faCrown, faMessage, faHeart, faEnvelope, faChevronDown, faChevronUp, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { faStar as farStar, faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { parseSupabaseDate } from '@/lib/dateUtils';
+
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -401,7 +404,7 @@ export default function DashboardPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-[15px] leading-relaxed break-words font-medium" style={{ color: 'var(--text-primary)' }}>
+                        <p className="text-[15px] leading-relaxed wrap-break-word font-medium" style={{ color: 'var(--text-primary)' }}>
                           {m.message}
                         </p>
                       </div>
@@ -610,7 +613,7 @@ export default function DashboardPage() {
                                     {format(parseSupabaseDate(r.created_at), 'd MMM, HH:mm', { locale: idLocale })}
                                   </span>
                                 </div>
-                                <p className="text-[14px] leading-relaxed break-words font-medium" style={{ color: 'var(--text-secondary)' }}>
+                                <p className="text-[14px] leading-relaxed wrap-break-word font-medium" style={{ color: 'var(--text-secondary)' }}>
                                   {r.reply}
                                 </p>
                               </div>
