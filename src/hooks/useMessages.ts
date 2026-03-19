@@ -11,6 +11,12 @@ export function useMessages() {
 
   // Fetch initial data
   useEffect(() => {
+    if (!supabase) {
+      console.warn('Supabase client is not initialized. Check your environment variables.');
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       
@@ -109,6 +115,7 @@ export function useMessages() {
   }, []);
 
   const addReply = async (messageId: any, content: string, isOwner: boolean = false) => {
+    if (!supabase) return;
     const { data, error } = await supabase
       .from('replies')
       .insert([
@@ -126,6 +133,7 @@ export function useMessages() {
   };
 
   const toggleLove = async (id: any, currentStatus: boolean) => {
+    if (!supabase) return;
     const { error } = await supabase
       .from('messages')
       .update({ is_loved: !currentStatus })
@@ -134,6 +142,7 @@ export function useMessages() {
   };
 
   const togglePin = async (id: any, currentStatus: boolean) => {
+    if (!supabase) return;
     const { error } = await supabase
       .from('messages')
       .update({ is_pinned: !currentStatus })
@@ -142,6 +151,7 @@ export function useMessages() {
   };
 
   const toggleHighlight = async (id: any, currentStatus: boolean) => {
+    if (!supabase) return;
     const { error } = await supabase
       .from('messages')
       .update({ is_highlighted: !currentStatus })
