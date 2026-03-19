@@ -10,11 +10,7 @@ const nextConfig: NextConfig = {
         pathname: '/7.x/**',
       },
     ],
-  },
-  experimental: {
-    // @ts-ignore - resolve cross-origin request warning for local development
-    allowedDevOrigins: ['0.0.0.0'],
-  },
+  }
 };
 
 export default nextConfig;
