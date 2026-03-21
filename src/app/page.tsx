@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMessages } from '@/hooks/useMessages';
 import MessageCard from '@/components/MessageCard';
 import { motion } from 'framer-motion';
@@ -15,6 +15,16 @@ export default function HomePage() {
 
   const totalPages = Math.ceil(messages.length / ITEMS_PER_PAGE);
   const currentMessages = messages.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  // Cleanup tracking URLs (UTM, fbclid, etc.)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search) {
+      const url = new URL(window.location.href);
+      if (url.search) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
