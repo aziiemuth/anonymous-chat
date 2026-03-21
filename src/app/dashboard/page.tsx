@@ -9,8 +9,8 @@ import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faThumbtack, faStar, faMagnifyingGlass, faShieldHalved, faLock, faCrown, faMessage, faHeart, faEnvelope, faChevronDown, faChevronUp, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { faStar as farStar, faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
+import { faTrash, faThumbtack, faMagnifyingGlass, faShieldHalved, faLock, faCrown, faMessage, faHeart, faEnvelope, faChevronDown, faChevronUp, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { parseSupabaseDate } from '@/lib/dateUtils';
 
 export const dynamic = 'force-dynamic';
@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const { messages, replies, loading, addReply, toggleLove, togglePin, toggleHighlight } = useMessages();
+  const { messages, replies, loading, addReply, toggleLove, togglePin } = useMessages();
   const [activeReplyId, setActiveReplyId] = useState<any | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [expandedId, setExpandedId] = useState<any | null>(null);
@@ -166,29 +166,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleToggleHighlight = async (id: any, currentStatus: boolean) => {
-    try {
-      await toggleHighlight(id, currentStatus);
-      Swal.fire({
-        icon: 'success',
-        title: currentStatus ? 'Highlight dilepas' : 'Pesan di-highlight',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000,
-        background: 'var(--card-bg)',
-        color: 'var(--text-primary)',
-      });
-    } catch (err: any) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Gagal update highlight',
-        text: err.message,
-        background: 'var(--card-bg)',
-        color: 'var(--text-primary)',
-      });
-    }
-  };
 
   const handleToggleLove = async (id: any, currentStatus: boolean) => {
     try {
@@ -423,11 +400,6 @@ export default function DashboardPage() {
                               <FontAwesomeIcon icon={faThumbtack} className="w-2.5 h-2.5" /> Pinned
                             </span>
                           )}
-                          {m.is_highlighted && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                              <FontAwesomeIcon icon={faStar} className="w-2.5 h-2.5" /> Highlighted
-                            </span>
-                          )}
                           {m.is_loved && (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-pink-500/10 text-pink-400 border border-pink-500/20">
                               <FontAwesomeIcon icon={faHeart} className="w-2.5 h-2.5 fill-current" /> Loved
@@ -475,21 +447,6 @@ export default function DashboardPage() {
                         <span className="hidden sm:inline">{m.is_pinned ? 'Unpin' : 'Pin'}</span>
                       </motion.button>
 
-                      {/* Highlight Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.05, filter: 'brightness(1.2)' }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleToggleHighlight(m.id, m.is_highlighted)}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all"
-                        style={{
-                          backgroundColor: m.is_highlighted ? 'rgba(99,102,241,0.15)' : 'var(--input-bg)',
-                          color: m.is_highlighted ? '#818cf8' : 'var(--text-muted)',
-                          border: `1px solid ${m.is_highlighted ? 'rgba(99,102,241,0.3)' : 'var(--card-border)'}`,
-                        }}
-                      >
-                        {m.is_highlighted ? <FontAwesomeIcon icon={farStar} className="w-4 h-4" /> : <FontAwesomeIcon icon={faStar} className="w-4 h-4" />}
-                        <span className="hidden sm:inline">{m.is_highlighted ? 'Unhighlight' : 'Highlight'}</span>
-                      </motion.button>
 
                       {/* Reply Button */}
                       <motion.button

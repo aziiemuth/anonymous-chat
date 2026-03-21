@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage, faThumbtack, faHeart, faPaperPlane, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faMessage, faThumbtack, faHeart, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { Message, Reply } from '@/types';
@@ -53,10 +53,6 @@ export default function MessageCard({ message, replies = [], onReply }: MessageC
             : 'rgba(255, 255, 255, 0.1)',
       }}
     >
-      {/* Background glow for highlighted messages */}
-      {message.is_highlighted && (
-        <div className="absolute inset-0 rounded-3xl bg-indigo-500/5 blur-xl pointer-events-none" />
-      )}
 
       {/* Status Badges */}
       {message.is_pinned && (
@@ -68,9 +64,6 @@ export default function MessageCard({ message, replies = [], onReply }: MessageC
         <div className="absolute -top-3 -left-3 p-2 bg-linear-to-br from-pink-400 to-pink-600 rounded-full shadow-lg shadow-pink-500/30 z-10 border border-white/20">
             <FontAwesomeIcon icon={faHeart} className="w-3 h-3 text-white" />
         </div>
-      )}
-      {message.is_highlighted && (
-        <div className="absolute inset-0 rounded-3xl ring-2 ring-indigo-500/30 pointer-events-none" />
       )}
 
       {/* Header */}

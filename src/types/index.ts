@@ -10,7 +10,6 @@ export interface Message {
   id: any;
   message: string;
   is_pinned: boolean;
-  is_highlighted: boolean;
   is_loved: boolean;
   created_at: string;
 }
