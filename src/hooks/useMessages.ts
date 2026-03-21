@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Message, Reply } from '@/types';
 
+let cachedMessages: Message[] | null = null;
+let cachedReplies: Record<string, Reply[]> | null = null;
+
 export function useMessages() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [replies, setReplies] = useState<Record<string, Reply[]>>({});
-  const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState<Message[]>(cachedMessages || []);
+  const [replies, setReplies] = useState<Record<string, Reply[]>>(cachedReplies || {});
+  const [loading, setLoading] = useState(!cachedMessages);
 
   // Fetch initial data
   useEffect(() => {
@@ -30,7 +33,9 @@ export function useMessages() {
       if (messagesError) {
         console.error('Error fetching messages:', messagesError);
       } else {
-        setMessages(messagesData || []);
+        const fetchedMsg = messagesData || [];
+        cachedMessages = fetchedMsg;
+        setMessages(fetchedMsg);
       }
 
       // Fetch replies
@@ -49,6 +54,7 @@ export function useMessages() {
           }
           repliesByMessageId[reply.message_id].push(reply);
         });
+        cachedReplies = repliesByMessageId;
         setReplies(repliesByMessageId);
       }
 
@@ -65,9 +71,17 @@ export function useMessages() {
         { event: '*', schema: 'public', table: 'messages' },
         (payload: any) => {
           if (payload.eventType === 'INSERT') {
-            setMessages((prev) => [payload.new as Message, ...prev]);
+            setMessages((prev) => {
+              const next = [payload.new as Message, ...prev];
+              cachedMessages = next;
+              return next;
+            });
           } else if (payload.eventType === 'DELETE') {
-            setMessages((prev) => prev.filter((m) => m.id !== payload.old.id));
+            setMessages((prev) => {
+              const next = prev.filter((m) => m.id !== payload.old.id);
+              cachedMessages = next;
+              return next;
+            });
           } else if (payload.eventType === 'UPDATE') {
             setMessages((prev) =>
               prev.map((m) => (m.id === payload.new.id ? (payload.new as Message) : m))

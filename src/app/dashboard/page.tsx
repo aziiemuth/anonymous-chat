@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useMessages } from '@/hooks/useMessages';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,9 +24,25 @@ export default function DashboardPage() {
   const [replyContent, setReplyContent] = useState('');
   const [expandedId, setExpandedId] = useState<any | null>(null);
   const [, setTick] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
-    const i = setInterval(() => setTick(t => t + 1), 60000);
+    // Check if user is already authenticated in this session
+    if (typeof window !== 'undefined') {
+      const loginTime = sessionStorage.getItem('admin_login_time');
+      if (loginTime && Date.now() - parseInt(loginTime) < 5 * 60 * 1000) {
+        setIsAuthenticated(true);
+      }
+    }
+
+    const i = setInterval(() => {
+      setTick(t => t + 1);
+      const tempTime = sessionStorage.getItem('admin_login_time');
+      if (tempTime && Date.now() - parseInt(tempTime) >= 5 * 60 * 1000) {
+        sessionStorage.removeItem('admin_login_time');
+        setIsAuthenticated(false);
+      }
+    }, 10000); // Check every 10 seconds for more responsive lockout
     return () => clearInterval(i);
   }, []);
 
@@ -34,6 +51,9 @@ export default function DashboardPage() {
     const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
     if (password === adminPass) {
       setIsAuthenticated(true);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('admin_login_time', Date.now().toString());
+      }
       Swal.fire({
         icon: 'success',
         title: 'Welcome Admin!',
@@ -414,7 +434,7 @@ export default function DashboardPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-[15px] leading-relaxed wrap-break-word font-medium" style={{ color: 'var(--text-primary)' }}>
+                        <p className="text-[15px] leading-relaxed break-words font-medium" style={{ color: 'var(--text-primary)' }}>
                           {m.message}
                         </p>
                       </div>
@@ -422,9 +442,10 @@ export default function DashboardPage() {
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-2 mt-5 flex-wrap pt-4 border-t border-white/5">
+
                       {/* Love Button */}
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, filter: 'brightness(1.2)' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleToggleLove(m.id, m.is_loved)}
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all"
@@ -440,7 +461,7 @@ export default function DashboardPage() {
 
                       {/* Pin Button */}
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, filter: 'brightness(1.2)' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleTogglePin(m.id, m.is_pinned)}
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all"
@@ -456,7 +477,7 @@ export default function DashboardPage() {
 
                       {/* Highlight Button */}
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, filter: 'brightness(1.2)' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleToggleHighlight(m.id, m.is_highlighted)}
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all"
@@ -472,7 +493,7 @@ export default function DashboardPage() {
 
                       {/* Reply Button */}
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, filter: 'brightness(1.2)' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveReplyId(activeReplyId === m.id ? null : m.id)}
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm"
@@ -503,7 +524,7 @@ export default function DashboardPage() {
 
                       {/* Delete Button */}
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, filter: 'brightness(1.2)' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleDelete(m.id)}
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-red-500/10 hover:text-red-400"
@@ -623,12 +644,12 @@ export default function DashboardPage() {
                                     {format(parseSupabaseDate(r.created_at), 'd MMM, HH:mm', { locale: idLocale })}
                                   </span>
                                 </div>
-                                <p className="text-[14px] leading-relaxed wrap-break-word font-medium" style={{ color: 'var(--text-secondary)' }}>
+                                <p className="text-[14px] leading-relaxed break-words font-medium" style={{ color: 'var(--text-secondary)' }}>
                                   {r.reply}
                                 </p>
                               </div>
                               <motion.button
-                                whileHover={{ scale: 1.1 }}
+                                whileHover={{ scale: 1.1, filter: 'brightness(1.2)' }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => handleDelete(r.id, 'replies')}
                                 className="opacity-0 group-hover/reply:opacity-100 p-2 rounded-xl transition-all hover:bg-red-500/10"

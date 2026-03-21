@@ -1,14 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import { useMessages } from '@/hooks/useMessages';
 import MessageCard from '@/components/MessageCard';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBolt, faCommentDots, faPaperPlane, faArrowTrendUp } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faCommentDots, faPaperPlane, faArrowTrendUp, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 
 export default function HomePage() {
   const { messages, replies, loading, addReply } = useMessages();
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 3;
+
+  const totalPages = Math.ceil(messages.length / ITEMS_PER_PAGE);
+  const currentMessages = messages.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -157,7 +163,7 @@ export default function HomePage() {
             animate="show"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {messages.map((message) => (
+            {currentMessages.map((message) => (
               <motion.div key={message.id} variants={itemVariants}>
                 <MessageCard
                   message={message}
@@ -167,6 +173,78 @@ export default function HomePage() {
               </motion.div>
             ))}
           </motion.div>
+        )}
+
+        {/* Pagination Controls */}
+        {!loading && messages.length > ITEMS_PER_PAGE && (
+          <div className="mt-12 flex flex-col items-center space-y-4">
+            <div className="flex items-center space-x-6">
+              <motion.button
+                whileHover={currentPage > 1 ? { scale: 1.1 } : {}}
+                whileTap={currentPage > 1 ? { scale: 0.9 } : {}}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all disabled:opacity-20 disabled:cursor-not-allowed group/prev"
+                style={{ 
+                  backgroundColor: 'var(--card-bg)', 
+                  border: '1px solid var(--card-border)',
+                  boxShadow: 'var(--card-shadow)'
+                }}
+              >
+                <FontAwesomeIcon 
+                  icon={faChevronLeft} 
+                  className={`w-4 h-4 transition-colors ${currentPage > 1 ? 'text-cyan-500 group-hover/prev:text-indigo-500' : 'text-gray-500'}`} 
+                />
+              </motion.button>
+
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-bold tracking-widest uppercase" style={{ color: 'var(--text-faint)' }}>Page</span>
+                <span className="text-2xl font-black tabular-nums" style={{ color: 'var(--text-primary)' }}>{currentPage}</span>
+                <span className="text-sm font-bold tracking-widest uppercase" style={{ color: 'var(--text-faint)' }}>of {totalPages}</span>
+              </div>
+
+              <motion.button
+                whileHover={currentPage < totalPages ? { scale: 1.1 } : {}}
+                whileTap={currentPage < totalPages ? { scale: 0.9 } : {}}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all disabled:opacity-20 disabled:cursor-not-allowed group/next"
+                style={{ 
+                  backgroundColor: 'var(--card-bg)', 
+                  border: '1px solid var(--card-border)',
+                  boxShadow: 'var(--card-shadow)'
+                }}
+              >
+                <FontAwesomeIcon 
+                  icon={faChevronRight} 
+                  className={`w-4 h-4 transition-colors ${currentPage < totalPages ? 'text-cyan-500 group-hover/next:text-indigo-500' : 'text-gray-500'}`} 
+                />
+              </motion.button>
+            </div>
+            
+            {/* Visual Page dots */}
+            <div className="flex items-center space-x-2">
+              {Array.from({ length: Math.min(totalPages, 5) }).map((_, idx) => {
+                const pageNum = totalPages > 5 && currentPage > 3 
+                  ? currentPage - 2 + idx 
+                  : idx + 1;
+                
+                if (pageNum > totalPages) return null;
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+                    style={{ 
+                      backgroundColor: currentPage === pageNum ? '#0ea5e9' : 'var(--text-faint)',
+                      transform: currentPage === pageNum ? 'scale(1.5)' : 'scale(1)'
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* Empty State */}
