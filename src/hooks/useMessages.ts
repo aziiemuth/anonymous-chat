@@ -164,12 +164,5 @@ export function useMessages() {
     if (error) throw error;
   };
 
-    if (!supabase) return;
-    const { error } = await supabase
-      .from('messages')
-      .eq('id', id);
-    if (error) throw error;
-  };
-
-  return { messages, replies, loading, addReply, toggleLove, togglePin \};
+  return { messages, replies, loading, addReply, toggleLove, togglePin };
 }
