@@ -609,7 +609,7 @@ export default function DashboardPage() {
                                 whileHover={{ scale: 1.1, filter: 'brightness(1.2)' }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => handleDelete(r.id, 'replies')}
-                                className="opacity-0 group-hover/reply:opacity-100 p-2 rounded-xl transition-all hover:bg-red-500/10"
+                                className="opacity-60 hover:opacity-100 p-2 rounded-xl transition-all hover:bg-red-500/10"
                                 style={{ color: '#ef4444' }}
                                 title="Delete Reply"
                               >
