@@ -164,14 +164,12 @@ export function useMessages() {
     if (error) throw error;
   };
 
-  const toggleHighlight = async (id: any, currentStatus: boolean) => {
     if (!supabase) return;
     const { error } = await supabase
       .from('messages')
-      .update({ is_highlighted: !currentStatus })
       .eq('id', id);
     if (error) throw error;
   };
 
-  return { messages, replies, loading, addReply, toggleLove, togglePin, toggleHighlight };
+  return { messages, replies, loading, addReply, toggleLove, togglePin \};
 }
